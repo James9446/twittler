@@ -5,7 +5,7 @@ function checkForHashtag(tweet) {
   if (message.indexOf('#') > -1) {
     message = message.split('#');
     // Side effect that stores all hash-tags in an object to make them search-able 
-    tweet.message = message[0] + '<span>#' + message[1] + '</span>'
+    tweet.message = message[0] + ' ' + '<span>' + '#' + message[1] + '</span>'
     if (hashtags.hasOwnProperty(message[1])) {
       hashtags[message[1]].push(tweet);
     } else {
@@ -25,36 +25,111 @@ const $twittlesStreamDiv = $('<div></div>');
 $twittlesStreamDiv.addClass('container')
 $body.append($twittlesStreamDiv);
 
-var index = streams.home.length - 1;
-while(index >= 0){
-  var tweet = streams.home[index];
-  // console.log('index:', index)
+var currentIndex = streams.home.length - 1;
+var previousIndex = 0;
 
-  var $tweet = $('<div></div>');
-  $tweet.addClass('tweets')
-  const $user = $('<h3>' + tweet.user + '</h3>');
-  $user.addClass('user row justify-content-left');
-
-  const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
-  $message.addClass('message row justify-content-center')
-  // $message.addClass('message');
-
-  // $tweet.text('@' + $user + ': ' + $message);
-  // $tweet.html('<h3>' + $user + '</h3>')
-  $tweet.append($user).append($message);
-
-  $tweet.prependTo($twittlesStreamDiv);
-  index -= 1;
-  // console.log(tweet);
+function updateIndex() {
+  if (streams.home.length - 1 > currentIndex) {
+    previousIndex = currentIndex;
+    currentIndex = streams.home.length - 1;
+    // console.log('previousIndex:', previousIndex)
+    // console.log('currentIndex:', currentIndex);
+  }
 }
-console.log('streams.home',streams.home)
+
+
+// var numberOfTweets = index;
+function addTweetsToDOM () {
+  index = currentIndex;
+  while(index > previousIndex){
+    var tweet = streams.home[index];
+    // console.log('index:', index)
+
+    var $tweet = $('<div></div>');
+    $tweet.addClass('tweets')
+    const $user = $('<h3>@' + tweet.user + '</h3>');
+    $user.addClass('user row justify-content-left');
+    // console.log(checkForHashtag(tweet));
+    const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
+    $message.addClass('message row justify-content-center')
+    // $message.addClass('message');
+
+    // $tweet.text('@' + $user + ': ' + $message);
+    // $tweet.html('<h3>' + $user + '</h3>')
+    $tweet.append($user).append($message);
+
+    $tweet.prependTo($twittlesStreamDiv);
+    index -= 1;
+    // console.log(tweet);
+  }
+  // var addMore = addTweetsToDOM();
+  // addMore.delay(1000);
+};
+addTweetsToDOM ();
+
+// setInterval(function() {
+  // if (streams.home.length - 1 > currentIndex) {
+  //   previousIndex = currentIndex
+  //   currentIndex = streams.home.length - 1
+  //   console.log('previousIndex:', previousIndex)
+  //   console.log('currentIndex:', currentIndex);
+  // }
+// }, 5000);
+
+
+setInterval(function() {
+  updateIndex();
+  addTweetsToDOM();
+}, 5000);
+
+  // var addMore = addTweetsToDOM();
+  // addMore.delay(1000);
+// ---=== Add event listener to streams.home
+// if (numberOfTweets < streams.home.length - 1) {
+//   console.log('more tweets are here')
+// } 
+// console.log('streams.home',streams.home)
 // const $title = $('<h4>What\'s happening now on twittler</h4>');
 // $twittlesStreamDiv.prepend($title);
 
-console.log(tweet);
+// console.log(tweet);
 
 // ---=== New Tweets ===---
+// var newIndex = streams.home.length - 1;
+// setInterval(function() {
+//   newIndex = streams.home.length - 1;
+// }, 500)
 
+// function addNewTweetsToDOM () {
+
+//   while(newIndex >= index){
+//     var tweet = streams.home[newIndex];
+//     // console.log('index:', index)
+
+//     var $tweet = $('<div></div>');
+//     $tweet.addClass('tweets')
+//     const $user = $('<h3>@' + tweet.user + '</h3>');
+//     $user.addClass('user row justify-content-left');
+//     console.log(checkForHashtag(tweet));
+//     const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
+//     $message.addClass('message row justify-content-center')
+//     // $message.addClass('message');
+
+//     // $tweet.text('@' + $user + ': ' + $message);
+//     // $tweet.html('<h3>' + $user + '</h3>')
+//     $tweet.append($user).append($message);
+
+//     $tweet.prependTo($twittlesStreamDiv);
+//     newIndex -= 1;
+//     // console.log(tweet);
+//   }
+//     // console.log(tweet);
+//   // var addMore = addTweetsToDOM();
+//   // addMore.delay(1000);
+//   index = newIndex;
+// };
+
+// setInterval( addNewTweetsToDOM(), 500);
 
 // ---=== hashtag checker ===---
 // function(string) {
