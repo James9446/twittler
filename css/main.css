@@ -42,13 +42,7 @@ body {
 }
 
 .container {
-	/* background-color: #FFF; */
 	margin-top: 10px;
-	/*padding: 0 10em;*/
-	/*margin: 0, 200px;*/
-	/*margin-left: 200px;*/
-	/*text-align: center;*/
-	/*width: 80%;*/
 }
 
 .tweets {
@@ -56,24 +50,18 @@ body {
 	background-color: #FFF;
 	height: 4.5em;
 	border-bottom: 1px solid #e6ecf0;
-	/* margin-bottom: 5px; */
-	/*text-align: left;*/
-	/* width: 300px; */
 }
 .tweets:hover {
     background-color: #f5f8fa;
 }
 .user {
 	font-size: 1em;
-	/* width:  1em; */
 	margin-left: 2em;
 	padding-top:  0.5em;
-	/* margin: 0.3em 0 0 1em; */
 }
 
 .message {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	/* text-align: left; */
 	font-size: 1.1em;
 }
 
