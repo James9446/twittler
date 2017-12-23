@@ -25,7 +25,7 @@ function checkForHashtag(tweet) {
   var hashtag = [];
   if (message.indexOf('#') > -1) {
     message = message.split('#');
-    // Side effect that stores all hash-tags in an object to make them search-able 
+    // Side effect that stores all hash-tags in an object to make tweets search-able
     tweet.message = message[0] + ' ' + '<span>' + '#' + message[1] + '</span>'
     if (hashtags.hasOwnProperty(message[1])) {
       hashtags[message[1]].push(tweet);
@@ -54,32 +54,71 @@ function updateIndex() {
   }
 }
 
-function addTweetsToDOM () {
-  index = currentIndex;
+function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
   while(index > previousIndex){
-    var tweet = streams.home[index];
+    const tweet = tweetSource[index];
     // div for each tweet
-    var $tweet = $('<div></div>');
+    const $tweet = $('<div></div>');
     $tweet.addClass('tweets')
     // user
     const $user = $('<h3>@' + tweet.user + '</h3>');
-    $user.addClass('user row justify-content-left');
+    $user.addClass(' user row justify-content-left');
+    $user.attr('id', tweet.user)
     // tweet message and hashtag
     const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
     $message.addClass('message row justify-content-center')
     // user and tweet attached to tweet div
     $tweet.append($user).append($message);
     // tweet div attached to top of stream div
-    $tweet.prependTo($twittlerStreamDiv);
+    $tweet.prependTo(prependTweetsTo);
     index -= 1;
   }
 };
-addTweetsToDOM ();
+addTweetsToDOM (streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
+
+///--- comented out for testing ===---
 
 setInterval(function() {
   updateIndex();
-  addTweetsToDOM();
+  addTweetsToDOM(streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
 }, 2000);
+
+// ---=== Event listener for user selection ===---
+$twittlerStreamDiv.on('click', '.user', function(event) {
+  console.log($(this.id).selector)
+  console.log(streams.users[$(this.id).selector])
+  console.log('length:', streams.users[$(this.id).selector].length)
+
+  // create $userStreamDiv
+  const $userStreamDiv = $('<div></div>');
+  $userStreamDiv.addClass('container')
+    // Hide $twittlerStreamDiv    (also maybe also first hide $userStreamDiv incase it's clicked again)
+  $twittlerStreamDiv.hide(1000);
+    // Show $userStreamDiv
+  $userStreamDiv.show();
+  $body.append($userStreamDiv)
+    // create an h3 element to display the username from from event.target
+
+    // for each matching tweet in streams.users 
+  addTweetsToDOM (streams.users[$(this.id).selector], $userStreamDiv, streams.users[$(this.id).selector].length -1, 0)
+      // create a tweet message and prepend it to the modal div 
+      // Do this by calling addTweetsToDom()  
+        // with $userStreamDiv passed in as first argument
+        // streams.users[$(this.id).selector].length - 1 as the second argument
+        // 0 as the third argument 
+  const $backButton = $('<button>Back</button>');
+  $backButton.addClass('btn btn-primary')
+  $userStreamDiv.append($backButton);
+  $userStreamDiv.prepend($backButton);
+  $backButton.on('click', function() {
+    $userStreamDiv.hide(1000);
+    $twittlerStreamDiv.show(1000);
+  })
+})
+
+
+
+
 
 
 

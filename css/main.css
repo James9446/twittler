@@ -58,6 +58,12 @@ body {
 	font-size: 1em;
 	margin-left: 2em;
 	padding-top:  0.5em;
+	width: 9em;
+}
+
+.user:hover {
+	cursor: pointer;
+	color: #4ab3f5;
 }
 
 .message {
@@ -69,6 +75,8 @@ body {
 	color: #4ab3f5;;
 }
 
-
+.btn:hover {
+	cursor: pointer;
+}
 
 
