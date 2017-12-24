@@ -15,8 +15,16 @@ $navLinks.append($home);
 const $following = $('<li><a href="">Following</a></li>');
 $navLinks.append($following);
 
-const $search = $('<li><a href="">Search</a></li>');
+const $search = $('<li><a>Search</a></li>');
+$search.attr('id','search');
 $navLinks.append($search);
+
+const $searchInput = $('<input></input>');
+$searchInput.attr('id', 'searchInput');
+$searchInput.attr('type', 'text');
+$searchInput.attr('placeholder', ' #:');
+$navDiv.append($searchInput)
+$searchInput.hide();
 
 // ---=== Hashtag check and storage function ===---
 var hashtags = {};
@@ -37,7 +45,7 @@ function checkForHashtag(tweet) {
   return message;
 }
 
-// ---=== Twittler stream ===---
+// ---=== Twittler Main Stream ===---
 const $twittlerStreamDiv = $('<div></div>');
 $twittlerStreamDiv.addClass('container')
 $body.append($twittlerStreamDiv);
@@ -54,6 +62,7 @@ function updateIndex() {
   }
 }
 
+// ---=== Main DOM interface function for displaying tweets ===---
 function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
   while(index > previousIndex){
     const tweet = tweetSource[index];
@@ -63,12 +72,15 @@ function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
     // user
     const $user = $('<h3>@' + tweet.user + '</h3>');
     $user.addClass(' user row justify-content-left');
-    $user.attr('id', tweet.user)
+    $user.attr('id', tweet.user);
     // tweet message and hashtag
     const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
     $message.addClass('message row justify-content-center')
+    // Time stamp
+    const $timeStamp = $('<p>' + tweet.created_at + '</p>');
+    $timeStamp.addClass('timeStamp row justify-content-center');
     // user and tweet attached to tweet div
-    $tweet.append($user).append($message);
+    $tweet.append($user).append($message).append($timeStamp);
     // tweet div attached to top of stream div
     $tweet.prependTo(prependTweetsTo);
     index -= 1;
@@ -76,12 +88,11 @@ function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
 };
 addTweetsToDOM (streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
 
-///--- comented out for testing ===---
-
-setInterval(function() {
-  updateIndex();
-  addTweetsToDOM(streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
-}, 2000);
+// // ---=== New Tweets ===---
+// setInterval(function() {
+//   updateIndex();
+//   addTweetsToDOM(streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
+// }, 2000);
 
 // ---=== Event listener for user selection ===---
 $twittlerStreamDiv.on('click', '.user', function(event) {
@@ -93,7 +104,7 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
   const $userStreamDiv = $('<div></div>');
   $userStreamDiv.addClass('container')
     // Hide $twittlerStreamDiv    (also maybe also first hide $userStreamDiv incase it's clicked again)
-  $twittlerStreamDiv.hide(1000);
+  $twittlerStreamDiv.hide(500);
     // Show $userStreamDiv
   $userStreamDiv.show();
   $body.append($userStreamDiv)
@@ -111,14 +122,16 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
   $userStreamDiv.append($backButton);
   $userStreamDiv.prepend($backButton);
   $backButton.on('click', function() {
-    $userStreamDiv.hide(1000);
-    $twittlerStreamDiv.show(1000);
+    $userStreamDiv.hide(500);
+    $twittlerStreamDiv.show(500);
   })
 })
 
+// ---=== Search button ===--- 
 
+$search.on('click', function(event) {
+  $searchInput.show();
+})
 
-
-
-
+// $searchInput
 
