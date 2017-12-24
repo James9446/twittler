@@ -21,8 +21,9 @@ $navLinks.append($search);
 
 const $searchInput = $('<input></input>');
 $searchInput.attr('id', 'searchInput');
-$searchInput.attr('type', 'text');
+$searchInput.attr('type', 'search');
 $searchInput.attr('placeholder', ' #:');
+$searchInput.attr('autocomplete', true);
 $navDiv.append($searchInput)
 $searchInput.hide();
 
@@ -64,7 +65,7 @@ function updateIndex() {
 
 // ---=== Main DOM interface function for displaying tweets ===---
 function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
-  while(index > previousIndex){
+  while(index >= previousIndex){
     const tweet = tweetSource[index];
     // div for each tweet
     const $tweet = $('<div></div>');
@@ -89,19 +90,20 @@ function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
 addTweetsToDOM (streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
 
 // // ---=== New Tweets ===---
-// setInterval(function() {
-//   updateIndex();
-//   addTweetsToDOM(streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
-// }, 2000);
+setInterval(function() {
+  updateIndex();
+  addTweetsToDOM(streams.home, $twittlerStreamDiv, currentIndex, previousIndex);
+}, 1200);
 
 // ---=== Event listener for user selection ===---
+var $userStreamDiv = $('<div></div>');
 $twittlerStreamDiv.on('click', '.user', function(event) {
-  console.log($(this.id).selector)
-  console.log(streams.users[$(this.id).selector])
-  console.log('length:', streams.users[$(this.id).selector].length)
+  // console.log($(this.id).selector)
+  // console.log(streams.users[$(this.id).selector])
+  // console.log('length:', streams.users[$(this.id).selector].length)
 
   // create $userStreamDiv
-  const $userStreamDiv = $('<div></div>');
+  $userStreamDiv = $('<div></div>');
   $userStreamDiv.addClass('container')
     // Hide $twittlerStreamDiv    (also maybe also first hide $userStreamDiv incase it's clicked again)
   $twittlerStreamDiv.hide(500);
@@ -111,7 +113,7 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
     // create an h3 element to display the username from from event.target
 
     // for each matching tweet in streams.users 
-  addTweetsToDOM (streams.users[$(this.id).selector], $userStreamDiv, streams.users[$(this.id).selector].length -1, 0)
+  addTweetsToDOM (streams.users[$(this.id).selector], $userStreamDiv, streams.users[$(this.id).selector].length - 1, 0)
       // create a tweet message and prepend it to the modal div 
       // Do this by calling addTweetsToDom()  
         // with $userStreamDiv passed in as first argument
@@ -123,15 +125,61 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
   $userStreamDiv.prepend($backButton);
   $backButton.on('click', function() {
     $userStreamDiv.hide(500);
+    $hasgtagStreamDiv.hide(500);
     $twittlerStreamDiv.show(500);
   })
 })
 
-// ---=== Search button ===--- 
+// ---=== Search ===--- 
 
 $search.on('click', function(event) {
-  $searchInput.show();
+  $searchInput.toggle();
+  // $userStreamDiv.hide(500);
+  // $hasgtagStreamDiv.hide(500);
+  // $twittlerStreamDiv.show(500);
+  // Search button just toggles search input on and off
 })
 
-// $searchInput
+var $hasgtagStreamDiv = $('<div></div>');
+$searchInput.keydown(function(event) {
+  const searchTerm = $searchInput.val();
+  // if (searchTerm.indexOf('#') > -1) {
+  //   searchTerm.split('').shift().join('');
+  // }
+  if (event.keyCode === 13) {
+    $hasgtagStreamDiv.hide(500);
+    console.log(searchTerm);
+    $hasgtagStreamDiv = $('<div></div>');
+    $hasgtagStreamDiv.addClass('container')
+      // Hide $twittlerStreamDiv    (also maybe also first hide $hasgtagStreamDiv incase it's clicked again);
+    $twittlerStreamDiv.hide(500);
+    $userStreamDiv.hide(500)
+      // Show $hasgtagStreamDiv
+    $hasgtagStreamDiv.slideDown();
+    $body.append($hasgtagStreamDiv)
+      // create an h3 element to display the username from from event.target
+
+      // for each matching tweet in streams.users 
+    addTweetsToDOM (hashtags[searchTerm], $hasgtagStreamDiv, hashtags[searchTerm].length - 1, 0)
+        // create a tweet message and prepend it to the modal div 
+        // Do this by calling addTweetsToDom()  
+          // with $hasgtagStreamDiv passed in as first argument
+          // streams.users[$(this.id).selector].length - 1 as the second argument
+          // 0 as the third argument 
+    $(this).val('');
+    $searchInput.hide();
+    const $backButton = $('<button>Back</button>');
+    $backButton.addClass('btn btn-primary')
+    $hasgtagStreamDiv.append($backButton);
+    $hasgtagStreamDiv.prepend($backButton);
+    $backButton.on('click', function() {
+      $hasgtagStreamDiv.hide(500);
+      $userStreamDiv.hide(500)
+      $twittlerStreamDiv.show(500);
+      // $searchInput.val() = '';
+    })
+  }
+})
+
+console.log($searchInput.val());
 

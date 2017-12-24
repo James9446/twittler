@@ -47,9 +47,12 @@ body {
 
 #searchInput {
 	/* margin-top: -1em; */
-	margin-bottom: 1.3em;
+	/* margin-bottom: 1.3em; */
 	margin-left: 0.2em;
-	margin-top: -0.2em;
+	margin-top: -0.4em;
+	height: 2.3em;
+	border: 1px solid #e6ecf0;
+	border-radius: 0.5em;
 }
 
 #search:hover {
@@ -61,7 +64,7 @@ body {
 }
 
 .container {
-	margin-top: 10px;
+	margin-top: 1em;
 }
 
 .tweets {
