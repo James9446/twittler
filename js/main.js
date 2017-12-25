@@ -58,7 +58,7 @@ function updateIndex() {
   if (streams.home.length - 1 > currentIndex) {
     previousIndex = currentIndex;
     currentIndex = streams.home.length - 1;
-    // console.log('previousIndex:', previousIndex)
+    // console.log('previousIndex:', previousIndex);
     // console.log('currentIndex:', currentIndex);
   }
 }
@@ -106,7 +106,7 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
   $userStreamDiv = $('<div></div>');
   $userStreamDiv.addClass('container')
     // Hide $twittlerStreamDiv    (also maybe also first hide $userStreamDiv incase it's clicked again)
-  $twittlerStreamDiv.hide(500);
+  $twittlerStreamDiv.slideUp(1000);
     // Show $userStreamDiv
   $userStreamDiv.show();
   $body.append($userStreamDiv)
@@ -124,8 +124,8 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
   $userStreamDiv.append($backButton);
   $userStreamDiv.prepend($backButton);
   $backButton.on('click', function() {
-    $userStreamDiv.hide(500);
-    $hasgtagStreamDiv.hide(500);
+    $userStreamDiv.slideUp(1500);
+    $hasgtagStreamDiv.slideUp(1500);
     $twittlerStreamDiv.show(500);
   })
 })
