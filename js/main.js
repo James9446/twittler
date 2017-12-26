@@ -10,10 +10,11 @@ $body.prepend($navDiv);
 const $navLinks = $('<ul></ul>');
 $navDiv.append($navLinks);
 
-const $home = $('<li><a href="">Home</a></li>');
+const $home = $('<li><a>Home</a></li>');
+$home.attr('id', 'home');
 $navLinks.append($home);
 
-const $following = $('<li><a href="">Following</a></li>');
+const $following = $('<li><a>Following</a></li>');
 $navLinks.append($following);
 
 const $search = $('<li><a>Search</a></li>');
@@ -135,6 +136,20 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
     // $searchStreamDiv.slideUp(1500);
     $twittlerStreamDiv.show(500);
   })
+})
+
+// ---=== Home ===---
+$home.on('click', function(event) {
+  if ($searchStreamDiv) {
+      // this is to prevent multiple divs from being created if user does mutliple searches in a row
+      $searchStreamDiv.remove();
+    }
+  if ($userStreamDiv) {
+      // this is to prevent multiple divs from being created if user does mutliple searches in a row
+      $userStreamDiv.remove();
+    }
+  $twittlerStreamDiv.show(500);
+
 })
 
 // ---=== Search ===--- 
