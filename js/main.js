@@ -47,46 +47,6 @@ function checkForHashtag(tweet) {
   return message;
 }
 
-// ---=== Time ===---
-// var initialTime = streams[0].users.created_at
-// console.log(initialTime);
-var timeOfPageLoad = new Date().getTime();
-// console.log(d);
-
-function createDynamicTimeStamp() {
-  var currentTime = new Date().getTime();
-  // timeStamp = tweet.created_at
-  currentTime = (currentTime - timeOfPageLoad) / 60000;
-  console.log(currentTime);
-  if (currentTime < 1) {
-    return 'Just now';
-  }
-  if (currentTime > 1) {
-    return 'One minute ago';
-  }
-  if (currentTime > 2) {
-    return 'Two minutes ago';
-  }
-  if (currentTime > 3) {
-    return 'Three minutes ago';
-  }
-  if (currentTime > 4) {
-    return 'Four minutes ago';
-  }
-  if (currentTime > 5) {
-    return 'Five minutes ago';
-  }
-  if (currentTime > 6) {
-    return 'Over five minutes ago';
-  }
-  if (currentTime > 10) {
-    return 'Ten minutes ago';
-  }
-  if (currentTime > 11) {
-    return 'Over Ten minutes ago';
-  }
-}
-
 // ---=== Twittler Main Stream ===---
 const $twittlerStreamDiv = $('<div></div>');
 $twittlerStreamDiv.addClass('container')
@@ -103,7 +63,6 @@ function updateIndex() {
     // console.log('currentIndex:', currentIndex);
     return true;
   }
-
 }
 
 // ---=== Main DOM interface function for displaying tweets ===---
@@ -122,7 +81,7 @@ function addTweetsToDOM (tweetSource, prependTweetsTo, index, previousIndex) {
     const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
     $message.addClass('message row justify-content-center');
     // Time stamp
-    const $timeStamp = $('<p>' + createDynamicTimeStamp() + '</p>');
+    const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
     $timeStamp.addClass('timeStamp row justify-content-center');
     // user and tweet attached to tweet div
     $tweet.append($user).append($message).append($timeStamp);
