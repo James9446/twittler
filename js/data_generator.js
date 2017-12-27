@@ -38,7 +38,7 @@ var randomMessage = function(){
 };
 
 // generate random tweets on a random schedule
-var generateRandomTweet = function(){
+var generateRandomTweet = function() {
   var tweet = {};
   tweet.user = randomElement(users);
   tweet.message = randomMessage();
@@ -59,6 +59,7 @@ scheduleNextTweet();
 // utility function for letting students add "write a tweet" functionality
 // (note: not used by the rest of this file.)
 var writeTweet = function(message){
+  var visitor = 'guest';
   if(!visitor){
     throw new Error('set the global visitor property!');
   }
