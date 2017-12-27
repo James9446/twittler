@@ -53,19 +53,18 @@ $container.append($twittlerStreamDiv);
 // ---=== Hashtag check and storage function ===---
 function checkForHashtag(tweet) {
   var message = tweet.message;
-  var hashtag = [];
   if (message.indexOf('#') > -1 && message.indexOf('span') === -1) {
     message = message.split('#');
     // Side effect that stores all hash-tags in an object to make tweets search-able
-    tweet.message = message[0] + ' ' + '<span id=' + message[1] + '>#' + message[1] + '</span>';
+    tweet.message = message[0] + ' ' + '<span class="hash" id=' + message[1] + '>#' + message[1] + '</span>';
     if (hashtags.hasOwnProperty(message[1])) {
       hashtags[message[1]].push(tweet);
     } else {
       hashtags[message[1]] = [tweet];
     }
-    return tweet.message;
+    return $('<p>' + tweet.message + '</p>');
   }
-  return message;
+  return $('<p>' + message + '</p>');
 }
 
 // ---=== Index update ===---
@@ -81,7 +80,7 @@ function updateIndex() {
 
 // ---=== Main DOM interface function for displaying tweets ===---
 function addTweetsToDOM(tweetSource, shouldPrepend, prependTweetsTo, index) {
-  while(index >= 0){
+  while(index >= 0) {
     // console.log('index:', index, 'previousIndex:', previousIndex);
     const tweet = tweetSource[index];
     // div for each tweet
@@ -93,7 +92,7 @@ function addTweetsToDOM(tweetSource, shouldPrepend, prependTweetsTo, index) {
     $user.addClass(' user row justify-content-left');
     $user.attr('id', tweet.user);
     // tweet message and hashtag
-    const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
+    const $message = checkForHashtag(tweet);
     $message.addClass('message row justify-content-center');
     // Time stamp
     const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
@@ -125,7 +124,7 @@ setInterval(function() {
     $user.addClass(' user row justify-content-left');
     $user.attr('id', tweet.user);
     // tweet message and hashtag
-    const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
+    const $message = checkForHashtag(tweet);
     $message.addClass('message row justify-content-center');
     // Time stamp
     const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
@@ -140,7 +139,7 @@ setInterval(function() {
 // *** Event listeners ***
 // ---=== user selection ===---
 $container.on('click', '.user', function(event) {
-  console.log(this.nodeName);
+  console.log($(this.id).selector);
   if ($userStreamDiv) {
     $userStreamDiv.remove();
   }
@@ -233,5 +232,59 @@ $searchInput.keydown(function(event) {
   //   });
   // });
 });
+
+$container.on('click', '.hash', function(event) {
+  const searchTerm = $(this.id).selector;
+  console.log(searchTerm);
+    if ($searchStreamDiv) {
+      $searchStreamDiv.remove();
+    }
+    if ($userStreamDiv) {
+      $userStreamDiv.remove();
+    }
+    $searchStreamDiv = $('<div></div>');
+    $twittlerStreamDiv.hide(500);
+    $searchStreamDiv.slideDown(500);
+    $container.append($searchStreamDiv)
+    addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
+    // $(this).val('');
+    $searchInput.hide(500);
+    const $backButton = $('<button>Back</button>');
+    $backButton.addClass('btn btn-primary');
+    $searchStreamDiv.append($backButton);
+    $searchStreamDiv.prepend($backButton);
+    $backButton.on('click', function() {
+      $searchStreamDiv.remove();
+      $twittlerStreamDiv.show(500);
+    })
+});
+
+// if ($userStreamDiv) {
+//   $userStreamDiv.on('click', '.message', function(event) {
+//   const searchTerm = $(this.id).selector;
+//   console.log(searchTerm);
+//     if ($searchStreamDiv) {
+//       $searchStreamDiv.remove();
+//     }
+//     if ($userStreamDiv) {
+//       $userStreamDiv.remove();
+//     }
+//     $searchStreamDiv = $('<div></div>');
+//     $twittlerStreamDiv.hide(500);
+//     $searchStreamDiv.slideDown(500);
+//     $container.append($searchStreamDiv)
+//     addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
+//     // $(this).val('');
+//     $searchInput.hide(500);
+//     const $backButton = $('<button>Back</button>');
+//     $backButton.addClass('btn btn-primary');
+//     $searchStreamDiv.append($backButton);
+//     $searchStreamDiv.prepend($backButton);
+//     $backButton.on('click', function() {
+//       $searchStreamDiv.remove();
+//       $twittlerStreamDiv.show(500);
+//     })
+// });
+// }
 
 

@@ -109,6 +109,7 @@ body {
 
 .message span {
 	color: #4ab3f5;
+	cursor: pointer;
 }
 
 .timeStamp {
