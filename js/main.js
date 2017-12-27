@@ -1,5 +1,6 @@
 // *** Variables ***
 var $body = $('body');
+const $container = $('<div></div>');
 const $navDiv = $('<div></div>');
 const $navLinks = $('<ul></ul>');
 const $home = $('<li><a>Home</a></li>');
@@ -17,10 +18,13 @@ var $searchStreamDiv;
 // $body.html('');
 
 
-// ---=== Navigation ===---  
+ 
+$container.addClass('container');
+$body.append($container);
+// ---=== Navigation ===--- 
 $navDiv.addClass('nav');
-$body.prepend($navDiv);
 $navDiv.append($navLinks);
+$body.prepend($navDiv);
 // home
 $home.attr('id', 'home');
 $navLinks.append($home);
@@ -42,19 +46,18 @@ $navLinks.append($searchInput);
 $searchInput.hide();
 
 // ---=== Twittler Main Stream ===---
-$twittlerStreamDiv.addClass('container')
-$body.append($twittlerStreamDiv);
+$container.append($twittlerStreamDiv);
 
 
 // *** Functions ***
 // ---=== Hashtag check and storage function ===---
 function checkForHashtag(tweet) {
-  var message = tweet.message
+  var message = tweet.message;
   var hashtag = [];
-  if (message.indexOf('#') > -1) {
+  if (message.indexOf('#') > -1 && message.indexOf('span') === -1) {
     message = message.split('#');
     // Side effect that stores all hash-tags in an object to make tweets search-able
-    tweet.message = message[0] + ' ' + '<span>' + '#' + message[1] + '</span>'
+    tweet.message = message[0] + ' ' + '<span id=' + message[1] + '>#' + message[1] + '</span>';
     if (hashtags.hasOwnProperty(message[1])) {
       hashtags[message[1]].push(tweet);
     } else {
@@ -68,7 +71,7 @@ function checkForHashtag(tweet) {
 // ---=== Index update ===---
 function updateIndex() {
   if (streams.home.length - 1 > currentIndex) {
-    previousIndex = currentIndex;
+    // previousIndex = currentIndex;
     currentIndex = streams.home.length - 1;
     // console.log('previousIndex:', previousIndex);
     // console.log('currentIndex:', currentIndex);
@@ -77,8 +80,8 @@ function updateIndex() {
 }
 
 // ---=== Main DOM interface function for displaying tweets ===---
-function addTweetsToDOM (tweetSource, shouldPrepend, prependTweetsTo, index, previousIndex) {
-  while(index >= previousIndex){
+function addTweetsToDOM(tweetSource, shouldPrepend, prependTweetsTo, index) {
+  while(index >= 0){
     // console.log('index:', index, 'previousIndex:', previousIndex);
     const tweet = tweetSource[index];
     // div for each tweet
@@ -86,6 +89,7 @@ function addTweetsToDOM (tweetSource, shouldPrepend, prependTweetsTo, index, pre
     $tweet.addClass('tweets');
     // user
     const $user = $('<h3>@' + tweet.user + '</h3>');
+    $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
     $user.addClass(' user row justify-content-left');
     $user.attr('id', tweet.user);
     // tweet message and hashtag
@@ -106,27 +110,49 @@ function addTweetsToDOM (tweetSource, shouldPrepend, prependTweetsTo, index, pre
   }
   // console.log('index:', index, 'previousIndex:', previousIndex);
 };
-addTweetsToDOM (streams.home, true, $twittlerStreamDiv, currentIndex, previousIndex);
+addTweetsToDOM (streams.home, true, $twittlerStreamDiv, currentIndex);
 
 // // ---=== New Tweets ===---
 setInterval(function() {
   if (updateIndex()) {
-    updateIndex();
-    addTweetsToDOM(streams.home, true, $twittlerStreamDiv, currentIndex, previousIndex);
+    const tweet = streams.home[streams.home.length - 1];
+    // div for each tweet
+    const $tweet = $('<div></div>');
+    $tweet.addClass('tweets');
+    // user
+    const $user = $('<h3>@' + tweet.user + '</h3>');
+    $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
+    $user.addClass(' user row justify-content-left');
+    $user.attr('id', tweet.user);
+    // tweet message and hashtag
+    const $message = $('<p>' + checkForHashtag(tweet) + '</p>');
+    $message.addClass('message row justify-content-center');
+    // Time stamp
+    const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
+    $timeStamp.addClass('timeStamp row justify-content-center');
+    // user and tweet attached to tweet div
+    $tweet.append($user).append($message).append($timeStamp);
+    $twittlerStreamDiv.prepend($tweet);
   }
-  
 }, 100);
 
 
 // *** Event listeners ***
 // ---=== user selection ===---
-$twittlerStreamDiv.on('click', '.user', function(event) {
+$container.on('click', '.user', function(event) {
+  console.log(this.nodeName);
+  if ($userStreamDiv) {
+    $userStreamDiv.remove();
+  }
+  if ($searchStreamDiv) {
+    $searchStreamDiv.remove();
+  }
   $userStreamDiv = $('<div></div>');
-  $userStreamDiv.addClass('container');
-  $twittlerStreamDiv.slideUp(1000);
-  $userStreamDiv.show();
-  $body.append($userStreamDiv);
-  addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1, 0);
+  $twittlerStreamDiv.slideUp(500);
+  $userStreamDiv.slideDown(500);
+  $container.append($userStreamDiv);
+
+  addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1);
   const $backButton = $('<button>Back</button>');
   $backButton.addClass('btn btn-primary');
   $userStreamDiv.prepend($backButton);
@@ -139,13 +165,12 @@ $twittlerStreamDiv.on('click', '.user', function(event) {
 // ---=== Home ===---
 $home.on('click', function(event) {
   if ($searchStreamDiv) {
-      $searchStreamDiv.remove();
-    }
+    $searchStreamDiv.remove();
+  }
   if ($userStreamDiv) {
-      $userStreamDiv.remove();
-    }
+    $userStreamDiv.remove();
+  }
   $twittlerStreamDiv.show(500);
-
 });
 
 // // ---=== postTweet ===---
@@ -173,16 +198,15 @@ $searchInput.keydown(function(event) {
       $searchStreamDiv.remove();
     }
     $searchStreamDiv = $('<div></div>');
-    $searchStreamDiv.addClass('container');
     $twittlerStreamDiv.hide(500);
     if ($userStreamDiv) {
       $userStreamDiv.remove();
     }
-    $searchStreamDiv.slideDown();
-    $body.append($searchStreamDiv)
-    addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length - 1, 0); 
+    $searchStreamDiv.slideDown(500);
+    $container.append($searchStreamDiv)
+    addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
     $(this).val('');
-    $searchInput.hide();
+    $searchInput.hide(500);
     const $backButton = $('<button>Back</button>');
     $backButton.addClass('btn btn-primary');
     $searchStreamDiv.append($backButton);
@@ -193,21 +217,21 @@ $searchInput.keydown(function(event) {
     })
   }
   // Usernames from search result can be selected 
-  $searchStreamDiv.on('click', '.user', function(event) {
-    $userStreamDiv = $('<div></div>');
-    $userStreamDiv.addClass('container');
-    $searchStreamDiv.slideUp(500);
-    $userStreamDiv.show();
-    $body.append($userStreamDiv);
-    addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1, 0);
-    const $backButton = $('<button>Back</button>');
-    $backButton.addClass('btn btn-primary');
-    $userStreamDiv.prepend($backButton);
-    $backButton.on('click', function() {
-      $userStreamDiv.remove();
-      $searchStreamDiv.show(500);
-    });
-  });
+  // $container.on('click', '.user', function(event) {
+  //   $userStreamDiv = $('<div></div>');
+  //   $userStreamDiv.addClass('container');
+  //   $searchStreamDiv.slideUp(500);
+  //   $userStreamDiv.show();
+  //   $container.append($userStreamDiv);
+  //   addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1, 0);
+  //   const $backButton = $('<button>Back</button>');
+  //   $backButton.addClass('btn btn-primary');
+  //   $userStreamDiv.prepend($backButton);
+  //   $backButton.on('click', function() {
+  //     $userStreamDiv.remove();
+  //     $searchStreamDiv.show(500);
+  //   });
+  // });
 });
 
 
