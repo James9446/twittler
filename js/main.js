@@ -175,6 +175,9 @@ $searchInput.keydown(function(event) {
     if ($searchStreamDiv) {
       $searchStreamDiv.remove();
     }
+    if ($userStreamDiv) {
+      $userStreamDiv.remove();
+    }
     $searchStreamDiv = $('<div></div>');
     $twittlerStreamDiv.hide(500);
     $searchStreamDiv.slideDown(500);
