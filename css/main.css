@@ -6,7 +6,6 @@
 
 body {
 	background-color: #e6ecf0;
-	/* padding: 0 16em; */
 }
 
 /* ---=== Start Nav ===--- */
@@ -26,6 +25,10 @@ body {
 
 .nav ul li:hover {
 	color: #FFF;
+}
+
+.nav ul li:active {
+	color: #4ab3f5;
 }
 
 .nav ul li a {
