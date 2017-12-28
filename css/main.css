@@ -65,6 +65,7 @@ body {
 .container {
 	/* margin-top: 0em; */
 	padding-top: 6em;
+	padding-bottom: 1.5em;
 	width: 820px;
 }
 

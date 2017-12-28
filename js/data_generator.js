@@ -7,6 +7,7 @@
 window.streams = {};
 streams.home = [];
 streams.users = {};
+streams.users.guest = [];
 streams.users.shawndrost = [];
 streams.users.sharksforcheap = [];
 streams.users.mracus = [];
@@ -15,6 +16,7 @@ window.users = Object.keys(streams.users);
 
 // utility function for adding tweets to our data structures
 var addTweet = function(newTweet){
+  // console.log(newTweet)
   var username = newTweet.user;
   streams.users[username].push(newTweet);
   streams.home.push(newTweet);
@@ -41,6 +43,9 @@ var randomMessage = function(){
 var generateRandomTweet = function() {
   var tweet = {};
   tweet.user = randomElement(users);
+  while (tweet.user === 'guest') {
+    tweet.user = randomElement(users);
+  }
   tweet.message = randomMessage();
   tweet.created_at = new Date();
   addTweet(tweet);
@@ -58,7 +63,7 @@ scheduleNextTweet();
 
 // utility function for letting students add "write a tweet" functionality
 // (note: not used by the rest of this file.)
-var writeTweet = function(message){
+var writeTweet = function(message) {
   var visitor = 'guest';
   if(!visitor){
     throw new Error('set the global visitor property!');

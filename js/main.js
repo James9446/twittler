@@ -1,5 +1,5 @@
 // *** Variables ***
-var $body = $('body');
+const $body = $('body');
 const $container = $('<div></div>');
 const $navDiv = $('<div></div>');
 const $navLinks = $('<ul></ul>');
@@ -8,16 +8,12 @@ const $postTweet = $('<li><a>Tweet</a></li>');
 const $tweetInput = $('<input></input>');
 const $search = $('<li><a>Search</a></li>');
 const $searchInput = $('<input></input>');
-var hashtags = {};
+const hashtags = {};
 const $twittlerStreamDiv = $('<div></div>');
 var currentIndex = streams.home.length - 1;
 var previousIndex = 0;
 var $userStreamDiv;
 var $searchStreamDiv;
-
-// $body.html('');
-
-
  
 $container.addClass('container');
 $body.append($container);
@@ -137,30 +133,6 @@ setInterval(function() {
 
 
 // *** Event listeners ***
-// ---=== user selection ===---
-$container.on('click', '.user', function(event) {
-  console.log($(this.id).selector);
-  if ($userStreamDiv) {
-    $userStreamDiv.remove();
-  }
-  if ($searchStreamDiv) {
-    $searchStreamDiv.remove();
-  }
-  $userStreamDiv = $('<div></div>');
-  $twittlerStreamDiv.slideUp(500);
-  $userStreamDiv.slideDown(500);
-  $container.append($userStreamDiv);
-
-  addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1);
-  const $backButton = $('<button>Back</button>');
-  $backButton.addClass('btn btn-primary');
-  $userStreamDiv.prepend($backButton);
-  $backButton.on('click', function() {
-    $userStreamDiv.remove();
-    $twittlerStreamDiv.show(500);
-  });
-});
-
 // ---=== Home ===---
 $home.on('click', function(event) {
   if ($searchStreamDiv) {
@@ -172,35 +144,56 @@ $home.on('click', function(event) {
   $twittlerStreamDiv.show(500);
 });
 
-// // ---=== postTweet ===---
-// $postTweet.on('click', function(event) {
-//   $tweetInput.toggle();
-// });
+// ---=== postTweet ===---
+$postTweet.on('click', function(event) {
+  $tweetInput.toggle();
+});
 
-// $tweetInput.keydown(function(event) {
-//   const newPost = $tweetInput.val();
-//   if (event.keyCode === 13) {
-//     console.log(writeTweet(newPost));
-//     writeTweet(newPost);
-//   }
-// });
+$tweetInput.keydown(function(event) {
+  const newPost = $tweetInput.val();
+  if (event.keyCode === 13) {
+    writeTweet(newPost);
+    $(this).val('');
+    $tweetInput.hide(500);
+  }
+});
+
+// ---=== Username selection ===---
+$container.on('click', '.user', function(event) {
+  if ($userStreamDiv) {
+    $userStreamDiv.remove();
+  }
+  if ($searchStreamDiv) {
+    $searchStreamDiv.remove();
+  }
+  $userStreamDiv = $('<div></div>');
+  $twittlerStreamDiv.slideUp(500);
+  $userStreamDiv.slideDown(500);
+  $container.append($userStreamDiv);
+  addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1);
+  const $backButton = $('<button>Back</button>');
+  $backButton.addClass('btn btn-primary');
+  $userStreamDiv.append($backButton);
+  $backButton.on('click', function() {
+    $userStreamDiv.remove();
+    $twittlerStreamDiv.show(500);
+  });
+});
 
 // ---=== Search ===--- 
 $search.on('click', function(event) {
   $searchInput.toggle();
 });
-
+// input field
 $searchInput.keydown(function(event) {
   const searchTerm = $searchInput.val();
   if (event.keyCode === 13) {
     if ($searchStreamDiv) {
       $searchStreamDiv.remove();
     }
+
     $searchStreamDiv = $('<div></div>');
     $twittlerStreamDiv.hide(500);
-    if ($userStreamDiv) {
-      $userStreamDiv.remove();
-    }
     $searchStreamDiv.slideDown(500);
     $container.append($searchStreamDiv)
     addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
@@ -209,30 +202,14 @@ $searchInput.keydown(function(event) {
     const $backButton = $('<button>Back</button>');
     $backButton.addClass('btn btn-primary');
     $searchStreamDiv.append($backButton);
-    $searchStreamDiv.prepend($backButton);
+    $searchStreamDiv.append($backButton);
     $backButton.on('click', function() {
       $searchStreamDiv.remove();
       $twittlerStreamDiv.show(500);
     })
   }
-  // Usernames from search result can be selected 
-  // $container.on('click', '.user', function(event) {
-  //   $userStreamDiv = $('<div></div>');
-  //   $userStreamDiv.addClass('container');
-  //   $searchStreamDiv.slideUp(500);
-  //   $userStreamDiv.show();
-  //   $container.append($userStreamDiv);
-  //   addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1, 0);
-  //   const $backButton = $('<button>Back</button>');
-  //   $backButton.addClass('btn btn-primary');
-  //   $userStreamDiv.prepend($backButton);
-  //   $backButton.on('click', function() {
-  //     $userStreamDiv.remove();
-  //     $searchStreamDiv.show(500);
-  //   });
-  // });
 });
-
+// click #
 $container.on('click', '.hash', function(event) {
   const searchTerm = $(this.id).selector;
   console.log(searchTerm);
@@ -247,44 +224,15 @@ $container.on('click', '.hash', function(event) {
     $searchStreamDiv.slideDown(500);
     $container.append($searchStreamDiv)
     addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
-    // $(this).val('');
     $searchInput.hide(500);
     const $backButton = $('<button>Back</button>');
     $backButton.addClass('btn btn-primary');
     $searchStreamDiv.append($backButton);
-    $searchStreamDiv.prepend($backButton);
+    $searchStreamDiv.append($backButton);
     $backButton.on('click', function() {
       $searchStreamDiv.remove();
       $twittlerStreamDiv.show(500);
     })
 });
-
-// if ($userStreamDiv) {
-//   $userStreamDiv.on('click', '.message', function(event) {
-//   const searchTerm = $(this.id).selector;
-//   console.log(searchTerm);
-//     if ($searchStreamDiv) {
-//       $searchStreamDiv.remove();
-//     }
-//     if ($userStreamDiv) {
-//       $userStreamDiv.remove();
-//     }
-//     $searchStreamDiv = $('<div></div>');
-//     $twittlerStreamDiv.hide(500);
-//     $searchStreamDiv.slideDown(500);
-//     $container.append($searchStreamDiv)
-//     addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
-//     // $(this).val('');
-//     $searchInput.hide(500);
-//     const $backButton = $('<button>Back</button>');
-//     $backButton.addClass('btn btn-primary');
-//     $searchStreamDiv.append($backButton);
-//     $searchStreamDiv.prepend($backButton);
-//     $backButton.on('click', function() {
-//       $searchStreamDiv.remove();
-//       $twittlerStreamDiv.show(500);
-//     })
-// });
-// }
 
 
