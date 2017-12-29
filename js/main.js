@@ -10,11 +10,45 @@ const $search = $('<li><a>Search</a></li>');
 const $searchInput = $('<input></input>');
 const $twittlerStreamDiv = $('<div></div>');
 const hashtags = {};
+var $filteredStreamDiv;
 var currentIndex = streams.home.length - 1;
-var $userStreamDiv;
-var $searchStreamDiv;
  
 // *** Functions ***
+// ---=== Create Tweet ===---
+function createTweet(tweet) {
+  const $tweet = $('<div></div>');
+  const $user = $('<h3>@' + tweet.user + '</h3>');
+  const $message = checkForHashtag(tweet);
+  const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
+  $tweet.addClass('tweets');
+  $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
+  $user.addClass(' user row justify-content-left');
+  $user.attr('id', tweet.user);
+  $message.addClass('message row justify-content-center');
+  $timeStamp.addClass('timeStamp row justify-content-center');
+  $tweet.append($user).append($message).append($timeStamp);
+  return $tweet;
+}
+
+// ---=== Main DOM interface function for displaying tweets ===---
+function addTweetsToDOM(tweetSource, index) {
+  if ($filteredStreamDiv) {
+    $filteredStreamDiv.remove();
+  }
+  $filteredStreamDiv = $('<div></div>');
+  while(index >= 0) {
+    const tweet = tweetSource[index];
+    if (tweetSource === streams.home) {
+      $twittlerStreamDiv.prepend(createTweet(tweet));
+    } else {
+      $filteredStreamDiv.append(createTweet(tweet));
+      $container.append($filteredStreamDiv);
+    }    
+    index -= 1;
+  }
+};
+addTweetsToDOM (streams.home, currentIndex);
+
 // ---=== Hashtag check and storage function ===---
 function checkForHashtag(tweet) {
   var message = tweet.message;
@@ -40,49 +74,25 @@ function updateIndex() {
   }
 }
 
-// ---=== Main DOM interface function for displaying tweets ===---
-function addTweetsToDOM(tweetSource, shouldPrepend, tweetDiv, index) {
-  while(index >= 0) {
-    const tweet = tweetSource[index];
-    const $tweet = $('<div></div>');
-    const $user = $('<h3>@' + tweet.user + '</h3>');
-    const $message = checkForHashtag(tweet);
-    const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
-    $tweet.addClass('tweets');
-    $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
-    $user.addClass(' user row justify-content-left');
-    $user.attr('id', tweet.user);
-    $message.addClass('message row justify-content-center');
-    $timeStamp.addClass('timeStamp row justify-content-center');
-    $tweet.append($user).append($message).append($timeStamp);
-    if (shouldPrepend) {
-      tweetDiv.prepend($tweet);
-    } else {
-      tweetDiv.append($tweet);
-    }    
-    index -= 1;
-  }
-};
-addTweetsToDOM (streams.home, true, $twittlerStreamDiv, currentIndex);
-
-// // ---=== New Tweets ===---
+// ---=== New Tweets ===---
 setInterval(function() {
   if (updateIndex()) {
-    const tweet = streams.home[streams.home.length - 1];
-    const $tweet = $('<div></div>');
-    const $user = $('<h3>@' + tweet.user + '</h3>');
-    const $message = checkForHashtag(tweet);
-    const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
-    $tweet.addClass('tweets');
-    $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
-    $user.addClass(' user row justify-content-left');
-    $user.attr('id', tweet.user);
-    $message.addClass('message row justify-content-center');
-    $timeStamp.addClass('timeStamp row justify-content-center');
-    $tweet.append($user).append($message).append($timeStamp);
-    $twittlerStreamDiv.prepend($tweet);
+    const tweet = streams.home[currentIndex];
+    $twittlerStreamDiv.prepend(createTweet(tweet));
   }
 }, 100);
+
+// ---=== Create Back Button ===---
+function createBackButton(div) {
+  const $backButton = $('<button>Back</button>');
+  $backButton.addClass('btn btn-primary');
+  div.append($backButton);
+  $backButton.on('click', function() {
+    div.remove();
+    $twittlerStreamDiv.show(500);
+  });
+}
+ 
 
 // *** Structure ***
 $container.addClass('container');
@@ -115,14 +125,12 @@ $searchInput.hide();
 // ---=== Twittler Main Stream ===---
 $container.append($twittlerStreamDiv);
 
+
 // *** Event listeners ***
 // ---=== Home ===---
 $home.on('click', function(event) {
-  if ($searchStreamDiv) {
-    $searchStreamDiv.remove();
-  }
-  if ($userStreamDiv) {
-    $userStreamDiv.remove();
+  if ($filteredStreamDiv) {
+    $filteredStreamDiv.remove();
   }
   $twittlerStreamDiv.show(500);
 });
@@ -144,27 +152,12 @@ $tweetInput.keydown(function(event) {
 
 // ---=== Username selection ===---
 $container.on('click', '.user', function(event) {
-  const $backButton = $('<button>Back</button>');
-  if ($userStreamDiv) {
-    $userStreamDiv.remove();
-  }
-  if ($searchStreamDiv) {
-    $searchStreamDiv.remove();
-  }
-  $userStreamDiv = $('<div></div>');
   $twittlerStreamDiv.slideUp(500);
-  $userStreamDiv.slideDown(500);
-  $container.append($userStreamDiv);
-  addTweetsToDOM (streams.users[$(this.id).selector], false, $userStreamDiv, streams.users[$(this.id).selector].length - 1);
-  $backButton.addClass('btn btn-primary');
-  $userStreamDiv.append($backButton);
-  $backButton.on('click', function() {
-    $userStreamDiv.remove();
-    $twittlerStreamDiv.show(500);
-  });
+  addTweetsToDOM (streams.users[$(this.id).selector], streams.users[$(this.id).selector].length - 1);
+  createBackButton($filteredStreamDiv);
 });
 
-// ---=== Search by hashtag ===--- 
+// ---=== Search ===--- 
 $search.on('click', function(event) {
   $searchInput.toggle();
   $searchInput.select();
@@ -172,28 +165,18 @@ $search.on('click', function(event) {
 // input field
 $searchInput.keydown(function(event) {
   const searchTerm = $searchInput.val();
-  const $backButton = $('<button>Back</button>');
   var validSearch = false;
   if (event.keyCode === 13) {
-    if ($searchStreamDiv) {
-      $searchStreamDiv.remove();
-    }
-    if ($userStreamDiv) {
-      $userStreamDiv.remove();
-    }
-    $searchStreamDiv = $('<div></div>');
-    $twittlerStreamDiv.hide(500);
-    $searchStreamDiv.slideDown(500);
-    $container.append($searchStreamDiv);
+    $twittlerStreamDiv.slideUp(500);
     for (let key in streams.users) {
       if (key === searchTerm) {
-        addTweetsToDOM (streams.users[searchTerm], false, $searchStreamDiv, streams.users[searchTerm].length - 1);
+        addTweetsToDOM (streams.users[searchTerm], streams.users[searchTerm].length - 1);
         validSearch = true;
       }
     }
     for (let key in hashtags) {
       if (key === searchTerm) {
-        addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1);
+        addTweetsToDOM (hashtags[searchTerm], hashtags[searchTerm].length -1);
         validSearch = true;
       }
     }
@@ -202,38 +185,16 @@ $searchInput.keydown(function(event) {
     }
     $(this).val('');
     $searchInput.hide(500);
-    $backButton.addClass('btn btn-primary');
-    $searchStreamDiv.append($backButton);
-    $searchStreamDiv.append($backButton);
-    $backButton.on('click', function() {
-      $searchStreamDiv.remove();
-      $twittlerStreamDiv.show(500);
-    })
+    createBackButton($filteredStreamDiv);
   }
 });
 // click #
 $container.on('click', '.hash', function(event) {
   const searchTerm = $(this.id).selector;
-  const $backButton = $('<button>Back</button>');
-  if ($searchStreamDiv) {
-    $searchStreamDiv.remove();
-  }
-  if ($userStreamDiv) {
-    $userStreamDiv.remove();
-  }
-  $searchStreamDiv = $('<div></div>');
-  $twittlerStreamDiv.hide(500);
-  $searchStreamDiv.slideDown(500);
-  $container.append($searchStreamDiv);
-  addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
+  $twittlerStreamDiv.slideUp(500);
+  addTweetsToDOM (hashtags[searchTerm], hashtags[searchTerm].length -1); 
   $searchInput.hide(500);
-  $backButton.addClass('btn btn-primary');
-  $searchStreamDiv.append($backButton);
-  $searchStreamDiv.append($backButton);
-  $backButton.on('click', function() {
-    $searchStreamDiv.remove();
-    $twittlerStreamDiv.show(500);
-  })
+  createBackButton($filteredStreamDiv);
 });
 
 
