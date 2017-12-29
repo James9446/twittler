@@ -90,7 +90,7 @@ function createBackButton(div) {
   $backButton.addClass('btn btn-primary');
   div.append($backButton);
   $backButton.on('click', function() {
-    div.slideUp();
+    div.slideUp(500);
     $twittlerStreamDiv.show(500);
   });
 }
@@ -131,7 +131,7 @@ $container.append($twittlerStreamDiv);
 // *** Event listeners ***
 // ---=== Home ===---
 $home.on('click', function(event) {
-  $filteredStreamDiv.hide();
+  $filteredStreamDiv.slideUp(500);
   $twittlerStreamDiv.show(500);
 });
 
