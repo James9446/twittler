@@ -19,7 +19,7 @@ function createTweet(tweet) {
   const $tweet = $('<div></div>');
   const $user = $('<h3>@' + tweet.user + '</h3>');
   const $message = checkForHashtag(tweet);
-  const $timeStamp = $('<p>' + '<span data-livestamp="' + tweet.created_at + '"></span>' + '</p>');
+  const $timeStamp = $('<p><span data-livestamp="' + tweet.created_at + '"></span></p>');
   $tweet.addClass('tweets');
   $user.prepend('<i class="fa fa-user-circle" aria-hidden="true"></i>');
   $user.addClass(' user row justify-content-left');
@@ -46,6 +46,8 @@ function addTweetsToDOM(tweetSource, index) {
     }    
     index -= 1;
   }
+  $filteredStreamDiv.hide();
+  $filteredStreamDiv.slideDown(500);
 };
 addTweetsToDOM (streams.home, currentIndex);
 
@@ -88,7 +90,7 @@ function createBackButton(div) {
   $backButton.addClass('btn btn-primary');
   div.append($backButton);
   $backButton.on('click', function() {
-    div.remove();
+    div.slideUp();
     $twittlerStreamDiv.show(500);
   });
 }
@@ -129,9 +131,7 @@ $container.append($twittlerStreamDiv);
 // *** Event listeners ***
 // ---=== Home ===---
 $home.on('click', function(event) {
-  if ($filteredStreamDiv) {
-    $filteredStreamDiv.remove();
-  }
+  $filteredStreamDiv.hide();
   $twittlerStreamDiv.show(500);
 });
 
@@ -181,7 +181,13 @@ $searchInput.keydown(function(event) {
       }
     }
     if (!validSearch) {
-      $searchStreamDiv.append($('<h2 class="error"> Sorry, no results for "<span>' + searchTerm + '</span>"</h2>'));
+      if ($filteredStreamDiv) {
+        $filteredStreamDiv.remove();
+      }
+      $filteredStreamDiv = $('<div><h2 class="error"> Sorry, no results for "<span>' + searchTerm + '</span>"</h2></div>');
+      $container.append($filteredStreamDiv);
+      $filteredStreamDiv.hide();
+      $filteredStreamDiv.slideDown(500);
     }
     $(this).val('');
     $searchInput.hide(500);
