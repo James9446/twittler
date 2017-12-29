@@ -78,7 +78,6 @@ body {
 .tweets {
 	background-color: #FFF;
 	height: 6em;
-	/* margin-top: 1em; */
 	border-bottom: 1px solid #e6ecf0;
 }
 .tweets:hover {
@@ -134,4 +133,20 @@ body {
 	cursor: pointer;
 }
 /* ---=== End Buttons ===--- */
+
+/* ---=== Start Error Message ===--- */
+.error {
+	background-color: #FFF;
+	height: 6em;
+	text-align:  center;
+	padding-top: 2em;
+	border-bottom: 1px solid #e6ecf0;
+}
+
+.error span {
+	color: #4ab3f5;
+}
+/* ---=== Start Error Message ===--- */
+
+
 

@@ -171,6 +171,7 @@ $search.on('click', function(event) {
 $searchInput.keydown(function(event) {
   const searchTerm = $searchInput.val();
   const $backButton = $('<button>Back</button>');
+  var validSearch = false;
   if (event.keyCode === 13) {
     if ($searchStreamDiv) {
       $searchStreamDiv.remove();
@@ -182,7 +183,21 @@ $searchInput.keydown(function(event) {
     $twittlerStreamDiv.hide(500);
     $searchStreamDiv.slideDown(500);
     $container.append($searchStreamDiv);
-    addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1); 
+    for (let key in streams.users) {
+      if (key === searchTerm) {
+        addTweetsToDOM (streams.users[searchTerm], false, $searchStreamDiv, streams.users[searchTerm].length - 1);
+        validSearch = true;
+      }
+    }
+    for (let key in hashtags) {
+      if (key === searchTerm) {
+        addTweetsToDOM (hashtags[searchTerm], false, $searchStreamDiv, hashtags[searchTerm].length -1);
+        validSearch = true;
+      }
+    }
+    if (!validSearch) {
+      $searchStreamDiv.append($('<h2 class="error"> Sorry, no results for "<span>' + searchTerm + '</span>"</h2>'));
+    }
     $(this).val('');
     $searchInput.hide(500);
     $backButton.addClass('btn btn-primary');
