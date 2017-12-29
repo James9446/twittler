@@ -10,12 +10,12 @@ body {
 
 /* ---=== Start Nav ===--- */
 .nav {
-  position: fixed;
-  width: 100%;
-  height: 5em;
-  padding: 1.7em 1em 0.2em 1em;
-  background-color: #FFF;
-  border-bottom: 1px solid rgba(0,0,0,0.25);
+    position: fixed;
+    width: 100%;
+    height: 5em;
+    padding: 1.7em 1em 0.2em 1em;
+    background-color: #FFF;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
 }
 
 .nav ul li {
@@ -56,8 +56,7 @@ body {
 
 /* ---=== Start Search ===--- */
 #searchInput, #tweetInput {
-	margin-left: 0.2em;
-	margin-top: -0.4em;
+	margin: -0.4em 0.2em 0 0.2em;
 	height: 2.4em;
 	border: 1px solid #e6ecf0;
 	border-radius: 0.5em;
@@ -66,7 +65,6 @@ body {
 
 /* ---=== Start Tweet Stream Section ===--- */
 .container {
-	/* margin-top: 0em; */
 	padding-top: 6em;
 	padding-bottom: 1.5em;
 	width: 820px;

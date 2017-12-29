@@ -130,6 +130,7 @@ $home.on('click', function(event) {
 // ---=== Post Tweet ===---
 $postTweet.on('click', function(event) {
   $tweetInput.toggle();
+  $tweetInput.select();
 });
 
 $tweetInput.keydown(function(event) {
@@ -166,6 +167,7 @@ $container.on('click', '.user', function(event) {
 // ---=== Search by hashtag ===--- 
 $search.on('click', function(event) {
   $searchInput.toggle();
+  $searchInput.select();
 });
 // input field
 $searchInput.keydown(function(event) {
