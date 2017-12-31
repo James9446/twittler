@@ -8,7 +8,7 @@ body {
 	background-color: #e6ecf0;
 }
 
-/* ---=== Start Nav ===--- */
+/* ---=== Start Nav Section ===--- */
 .nav {
     position: fixed;
     width: 100%;
@@ -52,16 +52,16 @@ body {
 	border-radius: 0.5em;
 	border: 1px solid #4ab3f5;
 }
-/* ---=== End Nav ===--- */
+/* ---=== End Nav Section ===--- */
 
-/* ---=== Start Search ===--- */
+/* ---=== Start Search Section ===--- */
 #searchInput, #tweetInput {
 	margin: -0.4em 0.2em 0 0.2em;
 	height: 2.4em;
 	border: 1px solid #e6ecf0;
 	border-radius: 0.5em;
 }
-/* ---=== End Search ===--- */
+/* ---=== End Search Section ===--- */
 
 /* ---=== Start Tweet Stream Section ===--- */
 .container {
@@ -70,9 +70,6 @@ body {
 	width: 820px;
 }
 
-.container:first-child {
-	margin-top: 1em;
-}
 .tweets {
 	background-color: #FFF;
 	height: 6em;
@@ -103,6 +100,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 .message {
 	font-family: "Helvetica Neue",Helvetica,Arial, sans-serif;
 	font-size: 1.3em;
@@ -121,7 +119,7 @@ body {
 }
 /* ---=== End Tweet Stream Section ===--- */
 
-/* ---=== Start Buttons ===--- */
+/* ---=== Start Button Section ===--- */
 .btn-primary {
 	background-color: #4ab3f5;
 	border-color: #4ab3f5;
@@ -130,9 +128,9 @@ body {
 .btn:hover {
 	cursor: pointer;
 }
-/* ---=== End Buttons ===--- */
+/* ---=== End Button Section ===--- */
 
-/* ---=== Start Error Message ===--- */
+/* ---=== Start Error Message Section ===--- */
 .error {
 	background-color: #FFF;
 	height: 6em;
@@ -144,7 +142,7 @@ body {
 .error span {
 	color: #4ab3f5;
 }
-/* ---=== Start Error Message ===--- */
+/* ---=== Start Error Message Section ===--- */
 
 
 
