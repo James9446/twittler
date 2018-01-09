@@ -8,6 +8,8 @@ const $postTweet = $('<li><a>Tweet</a></li>');
 const $tweetInput = $('<input></input>');
 const $search = $('<li><a>Search</a></li>');
 const $searchInput = $('<input></input>');
+const $login = $('<li><a>Search</a></li>');
+const $signUP = $('<li><a>Search</a></li>');
 const $twittlerStreamDiv = $('<div></div>');
 const hashtags = {};
 var $filteredStreamDiv;
